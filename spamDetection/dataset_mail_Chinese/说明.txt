@@ -1,0 +1,4 @@
+spam 垃圾邮件
+ham 正常邮件
+preprocess.py : 用于合并文件夹到单一文件的脚本
+这里spam_5000.utf8和ham_5000.utf8是分别从spam_all和ham_all中选择最短的5000条合并而成的

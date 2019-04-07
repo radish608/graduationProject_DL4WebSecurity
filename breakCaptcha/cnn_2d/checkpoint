@@ -1,0 +1,2 @@
+model_checkpoint_path: "/root/dl4websecurity/breakCaptcha/cnn_2d/cnn_2d.tfl"
+all_model_checkpoint_paths: "/root/dl4websecurity/breakCaptcha/cnn_2d/cnn_2d.tfl"
