@@ -49,10 +49,15 @@ def mlp_1d(x_train, y_train,x_test , y_test):
 
     #训练
     model = tflearn.DNN(net, tensorboard_verbose=0)
-    model.fit(X, Y, n_epoch=10, validation_set=(testX, testY),
-                             show_metric=True, run_id="mnist")
     model_path='bc.tfl'
-    model.save(model_path)
+    flag = 1
+    if flag==0:
+        model.fit(X, Y, n_epoch=10, validation_set=(testX, testY),
+                                     show_metric=True, run_id="mnist")
+        model.save(model_path)
+    elif flag==1:
+        model.load(model_path)
+        print model.evaluate(testX, testY)
 
 if __name__ == '__main__':
     print "break CAPTCHA"

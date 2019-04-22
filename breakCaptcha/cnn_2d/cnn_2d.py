@@ -26,11 +26,16 @@ def do_cnn_2d(X, Y, testX, testY ):
 
     # 训练
     model = tflearn.DNN(network, tensorboard_verbose=0)
-    model.fit({'input': X}, {'target': Y}, n_epoch=5,
-               validation_set=({'input': testX}, {'target': testY}),
-               snapshot_step=100, show_metric=True, run_id='mnist')
     model_path='cnn_2d.tfl'
-    model.save(model_path)
+    flag = 1
+    if flag==0:
+        model.fit({'input': X}, {'target': Y}, n_epoch=5,
+                   validation_set=({'input': testX}, {'target': testY}),
+                   snapshot_step=100, show_metric=True, run_id='mnist')
+        model.save(model_path)
+    elif flag==1:
+        model.load(model_path)
+        print model.evaluate(testX, testY)
 
 if __name__ == '__main__':
     #2d

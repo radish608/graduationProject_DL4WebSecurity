@@ -1,3 +1,5 @@
 *.tfl*
 /dataset*
 *.m
+*.model
+/mnist
