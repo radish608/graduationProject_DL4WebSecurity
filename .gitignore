@@ -1,5 +1,6 @@
 *.tfl*
-/dataset*
+/Datasets
 *.m
 *.model
 /mnist
+*.txt
