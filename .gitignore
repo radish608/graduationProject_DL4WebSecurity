@@ -4,3 +4,6 @@
 *.model
 /mnist
 *.txt
+/.idea
+.gitignore
+/Documents
