@@ -87,10 +87,12 @@ class TrainModel(object):
             else:
                 pass
 
-                x, y = preprocess.get_feature()
-                x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.05)
+                #x, y = preprocess.get_feature()
+                #x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.05)
                 step = 1
                 for i in range(3000):
+                    x, y = preprocess.getFeatureByBatch(i, size=128)
+                    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.05)
                     _, cost_ = sess.run([optimizer, cost], feed_dict={self.X: x_train, self.Y: y_train, self.keep_prob: 0.75})
                     if step % 10 == 0:
                         acc_char = sess.run(accuracy_char_count, feed_dict={self.X: x_test, self.Y: y_test, self.keep_prob: 1.})

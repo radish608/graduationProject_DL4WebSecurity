@@ -22,6 +22,9 @@ standard_height = 60
 dir = "/home/randolph1997/DL4WebSecurity/breakCaptcha/captchalib/dataset"
 file_list = os.listdir(dir)
 
+class TrainError(Exception):
+    pass
+
 def check_dataset(dir, standard_width, standard_height, file_suffix):
     print "数据集校验"
     standard_size = (standard_width, standard_height)
@@ -85,7 +88,24 @@ def getFeatureByBatch(n, size=128):
     batch_x = np.zeros([size, standard_width*standard_height])
     batch_y = np.zeros([size, captcha_char_count * len(characters)])
 
-    #maxBatch = int(len())
+    max_batch = int(len(file_list) / size)
+
+    if max_batch - 1 < 0:
+        raise TrainError("训练集图片数量需要大于每批次训练的图片数量")
+
+    if n > max_batch - 1:
+        n = n % max_batch
+    s = n * size
+    e =  (n + 1) * size
+    this_batch = file_list[s:e]
+
+    for i, img_name in enumerate(this_batch):
+        label, img_array = img2text(dir, img_name)
+        img_array = make_gray(img_array)
+        batch_x[i, :] = img_array.flatten() / 255
+        batch_y[i, :] = text2vec(label)
+    return batch_x, batch_y
+
 def get_feature():
     x = np.zeros([len(file_list), standard_width*standard_height])
     y = np.zeros([len(file_list), captcha_char_count * len(characters)])
