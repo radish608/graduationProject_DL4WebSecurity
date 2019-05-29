@@ -16,10 +16,10 @@ for i in range(ord('A'), ord('Z')+1):
 for i in range(ord('a'), ord('z')+1):
     characters.append(chr(i))
 
-standard_width = 160
+standard_width = 100
 standard_height = 60
 
-dir = "/home/randolph1997/DL4WebSecurity/breakCaptcha/captchalib/dataset"
+dir = "./dataset"
 file_list = os.listdir(dir)
 
 class TrainError(Exception):

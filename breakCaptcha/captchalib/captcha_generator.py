@@ -7,7 +7,7 @@ import time
 import numpy as np
 
 class Generator:
-    width = 160
+    width = 100
     height = 60
     def __init__(self, characters, root_dir):
         self.characters = characters
@@ -31,6 +31,6 @@ if __name__ == '__main__':
     root_dir = "/home/randolph1997/DL4WebSecurity/breakCaptcha/captchalib/dataset"
     characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
     generator = Generator(characters, root_dir)
-    img_count = 1000
+    img_count = 6000
     char_count = 4
     generator.generate(img_count, char_count)

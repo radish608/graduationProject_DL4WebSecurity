@@ -27,12 +27,12 @@ def process_data(file_list, save_name='tf-idf.model'):
     x = vectoring.fit_transform(content)
     y = np.concatenate((np.repeat([1], file_cnt[0],axis=0),
                         np.repeat([0], file_cnt[1], axis=0)), axis=0)
+    #x=x.toarray()
     data = pickle.dumps((x, y, vectoring))
 
     with open(save_name, 'w') as f:
         f.write(data)
     return
-
 
 def load_data(model_name='tf-idf.model'):
     '''

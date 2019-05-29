@@ -3,7 +3,6 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import *
 from sklearn import svm, ensemble, feature_selection
-
 from sklearn.model_selection import train_test_split, cross_validate
 from sklearn.utils import shuffle
 import PreProcess
@@ -47,10 +46,11 @@ if __name__ == "__main__":
         x = feature_select(x, y)
         #print len(model.get_feature_names())
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.9)
-        model = Classifier()
-        model.train_func(x_train, y_train)
-        y_pred = model.clf.predict(x_test)
-        y_vec = result_vectoring(y_test)
-        y_score = model.clf.predict_proba(x_test)
-        print 'roc_auc_score:', metrics.roc_auc_score(y_vec, y_score)
-        print 'classification_report\n', metrics.classification_report(y_test, y_pred)
+        print x.shape
+        #model = Classifier()
+        #model.train_func(x_train, y_train)
+        #y_pred = model.clf.predict(x_test)
+        #y_vec = result_vectoring(y_test)
+        #y_score = model.clf.predict_proba(x_test)
+        #print 'roc_auc_score:', metrics.roc_auc_score(y_vec, y_score)
+        #print 'classification_report\n', metrics.classification_report(y_test, y_pred)

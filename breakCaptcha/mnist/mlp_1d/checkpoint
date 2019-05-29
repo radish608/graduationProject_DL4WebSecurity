@@ -1,2 +1,2 @@
-model_checkpoint_path: "/home/randolph1997/DL4WebSecurity/breakCaptcha/bc.tfl"
-all_model_checkpoint_paths: "/home/randolph1997/DL4WebSecurity/breakCaptcha/bc.tfl"
+model_checkpoint_path: "/home/randolph1997/DL4WebSecurity/breakCaptcha/mnist/mlp_1d/bc.tfl"
+all_model_checkpoint_paths: "/home/randolph1997/DL4WebSecurity/breakCaptcha/mnist/mlp_1d/bc.tfl"

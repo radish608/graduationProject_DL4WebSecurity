@@ -1,5 +1,6 @@
 # -*-coding: utf-8 -*-
 
+from sklearn import metrics
 import tflearn
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.conv import conv_2d, max_pool_2d
@@ -8,38 +9,24 @@ from tflearn.layers.estimator import regression
 from sklearn.neural_network import MLPClassifier
 from sklearn.feature_extraction.text import CountVectorizer
 import os
-from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 from sklearn import neighbors
 import tensorflow as tf
-
-#加载数据
-import tflearn.datasets.mnist as mnist
-
-
-#k邻近算法+1d
-def knn_1d(x_train, y_train, x_test, y_test):
-    print "Knn + 1d"
-    clf = neighbors.KNeighborsClassifier(n_neighbors=15)
-    print clf
-    clf.fit(x_train, y_train)
-    y_predict = clf.predict(x_train)
-    print metrics.accuracy_score(y_test, y_predict)
+import preprocess
 
 #多层感知机+1d
-def mlp_1d(x_train, y_train,x_test , y_test):
-    print "MLP + 1d"
+def do_mlp():
 
     #构造神经网络
-    input_layer = tflearn.input_data(shape=[None, 784])
+    input_layer = tflearn.input_data(shape=[None, 100, 60, 1])
     dense1 = tflearn.fully_connected(input_layer, 64, activation='tanh',
                                      regularizer='L2', weight_decay=0.001)
     dropout1 = tflearn.dropout(dense1, 0.8)
     dense2 = tflearn.fully_connected(dropout1, 64, activation='tanh',
                                      regularizer='L2', weight_decay=0.001)
     dropout2 = tflearn.dropout(dense2, 0.8)
-    softmax = tflearn.fully_connected(dropout2, 10, activation='softmax')
+    softmax = tflearn.fully_connected(dropout2, 252, activation='softmax')
 
     sgd = tflearn.SGD(learning_rate=0.1, lr_decay=0.96, decay_step=1000)
     top_k = tflearn.metrics.Top_k(3)
@@ -49,24 +36,29 @@ def mlp_1d(x_train, y_train,x_test , y_test):
 
     #训练
     model = tflearn.DNN(net, tensorboard_verbose=0)
-    model_path='bc.tfl'
+    model_path='./model/mlp/mlp'
     flag = 0
-    if flag==0:
-        model.fit(X, Y, n_epoch=10, validation_set=(testX, testY),
-                                     show_metric=True, run_id="mnist")
+    if flag == 0:
+        if os.path.exists('./model/mlp'):
+            print "loading model"
+            model.load(model_path)
+        #for i in range(10):
+        x, y = preprocess.get_feature()
+        x = x.reshape([-1, 100, 60, 1])
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.05)
+        model.fit(x_train, y_train, n_epoch=100000, validation_set=(x_test, y_test),
+                              show_metric=True, run_id="captchalib")
         model.save(model_path)
     elif flag==1:
         model.load(model_path)
-        print model.evaluate(testX, testY)
+        print model.evaluate(x_test, y_test)
 
 if __name__ == '__main__':
-    print "break CAPTCHA"
     #一维向量
-    X, Y, testX, testY = mnist.load_data(one_hot=True)
+    #X, Y, testX, testY = mnist.load_data(one_hot=True)
 
     #二维向量
     #X = X.reshape([-1, 28, 28, 1])
     #testX = testX.reshape([-1, 28, 28, 1])
-    print testX
-    #knn_1d(X, Y, testX,testY)
-    mlp_1d(X, Y, testX,testY)
+    #print testX
+    do_mlp()

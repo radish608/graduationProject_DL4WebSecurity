@@ -30,10 +30,10 @@ def load_all_files():
     ham = []
     spam = []
     for i in range(1,7):
-        path = "./dataset_mail_English/enron%d/ham" % i
+        path = "../../Datasets/dataset_mail_English/enron%d/ham" % i
         print "Load %s" % path
         ham +=  loda_files_from_dir(path)
-        path = "./dataset_mail_English/enron%d/spam" % i
+        path = "../../Datasets/dataset_mail_English/enron%d/spam" % i
         print "Load %s" % path
         spam +=  loda_files_from_dir(path)
     return ham, spam
@@ -77,5 +77,5 @@ def mlp_wordbag(x_train, x_test, y_train, y_test):
 
 if __name__ == '__main__':
     x,y = get_features_by_wordbag()
-    #x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4, random_state=0)
-    #mlp_wordbag(x_train, x_test, y_train, y_test)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4)
+    mlp_wordbag(x_train, x_test, y_train, y_test)
