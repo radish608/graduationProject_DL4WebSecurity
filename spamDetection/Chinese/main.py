@@ -133,19 +133,18 @@ if __name__ == "__main__":
     #x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.4, random_state = 0)
     #CNN
     #do_cnn_wordbag(x_train, x_test, y_train, y_test)
-    ham = './ham_all.txt'
-    spam = './spam_all.txt'
 
-    #preprocess_svm.process_data([ham, spam])
+    #MLP
+    #x, y = preprocess.get_features_by_tfidf()
+    #x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.4, random_state = 0)
+    #do_dnn(x_train, x_test, y_train, y_test)
 
-    #x, y, vectoring = preprocess_svm.load_data()
-    x, y = preprocess.get_features_by_tfidf()
+    #CNN
+    x, y = preprocess.get_features_by_tf()
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.4, random_state = 0)
-    do_dnn(x_train, x_test, y_train, y_test)
-    #x = feature_select(x, y)
-    #x = x.toarray()
-
     do_cnn(x_train, x_test, y_train, y_test)
 
     #RNN
-    #do_rnn_wordbag(x_train, x_test, y_train, y_test)
+    #x, y = preprocess.get_features_by_tfidf()
+    #x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.4, random_state = 0)
+    #do_rnn(x_train, x_test, y_train, y_test)
