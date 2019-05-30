@@ -33,7 +33,7 @@ def load_all_files():
 
     return x,y
 
-def get_feature_wordbag(n):
+def get_feature_wordbag(n, m):
     save_name = "./Model/Data/wordbag_{}-Gram.data".format(n)
     if os.path.exists(save_name):
         f = open(save_name,'r')
@@ -45,7 +45,7 @@ def get_feature_wordbag(n):
     max_features=1000
     x,y=load_all_files()
     vectorizer = CountVectorizer(
-                                 ngram_range=(n, n),
+                                 ngram_range=(n, m),
                                  token_pattern=r'\b\d+\b',
                                  decode_error='ignore',
                                  strip_accents='ascii',

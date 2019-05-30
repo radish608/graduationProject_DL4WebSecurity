@@ -22,7 +22,6 @@ from tflearn.data_utils import to_categorical, pad_sequences
 from sklearn.neural_network import MLPClassifier
 from tflearn.layers.normalization import local_response_normalization
 from tensorflow.contrib import learn
-import preprocess_svm
 import preprocess
 import joblib
 
@@ -36,7 +35,7 @@ def show_diffrent_max_features():
     for i in range(1000,20000,2000):
         max_features=i
         print "max_features=%d" % i
-        x, y = get_features_by_wordbag()
+        x, y = preprocess.get_features_by_tf()
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4, random_state=0)
         gnb = GaussianNB()
         gnb.fit(x_train, y_train)
@@ -52,7 +51,7 @@ def show_diffrent_max_features():
     plt.show()
 
 
-def do_cnn(trainX, testX, trainY, testY):
+def do_cnn(trainX, testX, trainY, testY, feature_name):
     global max_document_length
 
     trainX = pad_sequences(trainX, maxlen=max_document_length, value=0.)
@@ -62,6 +61,8 @@ def do_cnn(trainX, testX, trainY, testY):
     testY = to_categorical(testY, nb_classes=2)
 
     # Building convolutional network
+    model_path = "./Model/CNN/cnn_{}".format(feature_name)
+
     network = input_data(shape=[None,max_document_length], name='input')
     network = tflearn.embedding(network, input_dim=1000000, output_dim=128)
     branch1 = conv_1d(network, 128, 3, padding='valid', activation='relu', regularizer="L2")
@@ -78,7 +79,8 @@ def do_cnn(trainX, testX, trainY, testY):
     model = tflearn.DNN(network, tensorboard_verbose=0)
     model.fit(trainX, trainY,
               n_epoch=5, shuffle=True, validation_set=(testX, testY),
-              show_metric=True, batch_size=100,run_id="spam")
+              show_metric=True, batch_size=100,run_id="spam_cnn_{}".format(feature_name))
+    model.save(model_path)
 
 def do_rnn(trainX, testX, trainY, testY):
     global max_document_length
@@ -102,14 +104,16 @@ def do_rnn(trainX, testX, trainY, testY):
               batch_size=10,run_id="spm-run",n_epoch=5)
 
 
-def do_dnn(x_train, x_test, y_train, y_test):
+def do_mlp(x_train, x_test, y_train, y_test, feature_name):
     # MLP
+    model_path = "./Model/MLP/mlp_{}".format(feature_name)
     clf = MLPClassifier(solver='lbfgs',
                         alpha=1e-5,
                         hidden_layer_sizes = (5, 2),
                         random_state = 1)
-    print  clf
+    print clf
     clf.fit(x_train, y_train)
+    joblib.dump(clf, model_path)
     y_pred = clf.predict(x_test)
     print metrics.accuracy_score(y_test, y_pred)
     print metrics.confusion_matrix(y_test, y_pred)
@@ -120,31 +124,22 @@ def feature_select(X, y):
     return SelectKBest(chi2, k=500).fit_transform(X, y)
 
 if __name__ == "__main__":
-    #x,y=get_features_by_wordbag()
-    #x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.4, random_state = 0)
-
-    #print "get_features_by_wordbag_tfidf"
-    #x,y=get_features_by_wordbag_tfidf()
-
     #show_diffrent_max_features()
-
-    #print "get_features_by_tf"
-    #x,y=get_features_by_tf()
-    #x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.4, random_state = 0)
-    #CNN
-    #do_cnn_wordbag(x_train, x_test, y_train, y_test)
 
     #MLP
     #x, y = preprocess.get_features_by_tfidf()
+    #feature_name = "tfidf"
     #x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.4, random_state = 0)
-    #do_dnn(x_train, x_test, y_train, y_test)
+    #do_mlp(x_train, x_test, y_train, y_test, feature_name)
 
     #CNN
-    x, y = preprocess.get_features_by_tf()
+    x, y = preprocess.get_features_by_vt()
+    feature_name = "vocabulary table"
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.4, random_state = 0)
-    do_cnn(x_train, x_test, y_train, y_test)
+    do_cnn(x_train, x_test, y_train, y_test, feature_name)
 
     #RNN
     #x, y = preprocess.get_features_by_tfidf()
+    #x = feature_select(x, y)
     #x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.4, random_state = 0)
     #do_rnn(x_train, x_test, y_train, y_test)

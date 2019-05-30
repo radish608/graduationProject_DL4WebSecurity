@@ -107,6 +107,7 @@ def do_mlp(x, y, feature_name):
     #print clf
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4, random_state=0)
     clf.fit(x_train, y_train)
+    print clf
     y_pred = clf.predict(x_test)
     joblib.dump(clf, model_name)
     #print y_train

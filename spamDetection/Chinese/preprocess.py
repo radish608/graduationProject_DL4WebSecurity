@@ -50,7 +50,7 @@ def get_features_by_tfidf():
     return x, y
 
 
-def get_features_by_tf():
+def get_features_by_vt():
     global  max_document_length
     file_list = ['./ham_5000.utf8', './spam_5000.utf8']
 
