@@ -37,9 +37,9 @@ def show_diffrent_max_features():
         print "max_features=%d" % i
         x, y = preprocess.get_features_by_tf()
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4, random_state=0)
-        gnb = GaussianNB()
-        gnb.fit(x_train, y_train)
-        y_pred = gnb.predict(x_test)
+        #gnb = GaussianNB()
+        #gnb.fit(x_train, y_train)
+        #y_pred = gnb.predict(x_test)
         score=metrics.accuracy_score(y_test, y_pred)
         a.append(max_features)
         b.append(score)
@@ -50,6 +50,11 @@ def show_diffrent_max_features():
     plt.legend()
     plt.show()
 
+def show_result(x_train, x_test, y_train, y_test, n):
+    clf = joblib.load(model_path.format(n))
+    y_pred = clf.predict(x_test)
+    print(classification_report(y_test, y_pred))
+    print metrics.confusion_matrix(y_test, y_pred)
 
 def do_cnn(trainX, testX, trainY, testY, feature_name):
     global max_document_length
@@ -117,8 +122,6 @@ def do_mlp(x_train, x_test, y_train, y_test, feature_name):
     y_pred = clf.predict(x_test)
     print metrics.accuracy_score(y_test, y_pred)
     print metrics.confusion_matrix(y_test, y_pred)
-
-
 
 def feature_select(X, y):
     return SelectKBest(chi2, k=500).fit_transform(X, y)

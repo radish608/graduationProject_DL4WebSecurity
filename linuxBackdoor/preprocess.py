@@ -33,8 +33,13 @@ def load_all_files():
 
     return x,y
 
-def get_feature_wordbag(n, m):
-    save_name = "./Model/Data/wordbag_{}-Gram.data".format(n)
+def get_feature_wordbag(n, m=0):
+    if m==0:
+        save_name = "./Model/Data/wordbag_{}-Gram.data".format(n)
+        m=n
+    else:
+        save_name = "./Model/Data/wordbag_{}+{}-Gram.data".format(n, m)
+
     if os.path.exists(save_name):
         f = open(save_name,'r')
         x, y, transformer = pickle.loads(f.read())

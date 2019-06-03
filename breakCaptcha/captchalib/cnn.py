@@ -7,7 +7,7 @@ import os
 import random
 import matplotlib.pyplot as plt
 
-class TrainModel(object):
+class TrainModel():
     def __init__(self, model_path):
         self.characters = preprocess.characters
         self.captcha_char_count = preprocess.captcha_char_count
@@ -73,8 +73,8 @@ class TrainModel(object):
         max_idx_l = tf.argmax(tf.reshape(self.Y, [-1, self.captcha_char_count, len(self.characters)]), 2)
 
         correct_pred = tf.equal(max_idx_p, max_idx_l)
-        accuracy_char_count = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
-        accuracy_image_count = tf.reduce_mean(tf.reduce_min(tf.cast(correct_pred, tf.float32), axis=1))
+        accuracy_char_count = tf.reduce_mean(tf.cast(correct_pred, tf.float32)) #字符
+        accuracy_image_count = tf.reduce_mean(tf.reduce_min(tf.cast(correct_pred, tf.float32), axis=1)) #整个图片
 
         saver = tf.train.Saver()
         with tf.Session() as sess:
@@ -124,7 +124,7 @@ class TrainModel(object):
                 else:
                     epoch += 1
             saver.save(sess, self.model_path)
-            sess.close
+            sess.close()
 
     def recognize_captcha(self):
         label, captcha_array = preprocess.img2text(preprocess.dir, random.choice(preprocess.file_list))
@@ -154,7 +154,45 @@ class TrainModel(object):
         plt.text(20, 1, 'predict:{}'.format(p_text))
         plt.show()
 
+    def show_result(self):
+        y_predict = self.cnn()
+        cost = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_predict, labels=self.Y))
+        optimizer = tf.train.AdamOptimizer(learning_rate=0.0001).minimize(cost)
+
+        predict = tf.reshape(y_predict, [-1, self.captcha_char_count, len(self.characters)])
+        max_idx_p = tf.argmax(predict, 2)
+        max_idx_l = tf.argmax(tf.reshape(self.Y, [-1, self.captcha_char_count, len(self.characters)]), 2)
+
+        correct_pred = tf.equal(max_idx_p, max_idx_l)
+        accuracy_char_count = tf.reduce_mean(tf.cast(correct_pred, tf.float32)) #字符
+        accuracy_image_count = tf.reduce_mean(tf.reduce_min(tf.cast(correct_pred, tf.float32), axis=1)) #整个图片
+
+        saver = tf.train.Saver()
+        with tf.Session() as sess:
+            # 恢复模型
+            if os.path.exists("./model/cnn"):
+                try:
+                    saver.restore(sess, self.model_path)
+                    print "=====================================ok!"
+                # 判断捕获model文件夹中没有模型文件的错误
+                except ValueError:
+                    print("model is empty")
+            else:
+                init = tf.global_variables_initializer()
+                #sess.run(init)
+                print "!!!!!!!!!!!!!!!ERROR!!!!"
+                sess.close()
+                return
+
+            x, y = preprocess.get_feature()
+            x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.05)
+            acc_char = sess.run(accuracy_char_count, feed_dict={self.X: x_test, self.Y: y_test, self.keep_prob: 1.})
+            acc_image = sess.run(accuracy_image_count, feed_dict={self.X: x_test, self.Y: y_test, self.keep_prob: 1.})
+            print("***Characters accuracy: {} Image accuracy: {}".format(acc_char, acc_image))
+            sess.close()
+
 if __name__ == '__main__':
     tm = TrainModel("./model/cnn/captcha_model")
     #tm.do_cnn()
-    tm.recognize_captcha()
+    #tm.recognize_captcha()
+    tm.show_result()
