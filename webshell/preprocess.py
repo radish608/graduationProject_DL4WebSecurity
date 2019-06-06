@@ -32,6 +32,7 @@ def load_files_re(dir):
                 fulepath = os.path.join(path, filename)
                 print "Load %s" % fulepath
                 t = load_file(fulepath)
+                print len(t)
                 files_list.append(t)
 
     return files_list
@@ -48,6 +49,7 @@ def load_files_opcode_re(dir):
                 fulepath = os.path.join(path, filename)
                 print "Load %s opcode" % fulepath
                 t = load_file_opcode(fulepath)
+                print len(t)
                 if len(t) > min_opcode_count:
                     files_list.append(t)
                 else:
@@ -176,7 +178,6 @@ def get_feature_by_opcode_ngram():
 def get_feature_by_opcode_vt():
     global white_count
     global black_count
-    global max_document_length
     x=[]
     y=[]
     data_file = "./Model/Data/opcode_vt.data"
@@ -201,7 +202,7 @@ def get_feature_by_opcode_vt():
         #print x
         y=y1+y2
 
-        vp=tflearn.data_utils.VocabularyProcessor(max_document_length=max_document_length,
+        vp=tflearn.data_utils.VocabularyProcessor(max_document_length=100,
                                                   min_frequency=0,
                                                   vocabulary=None,
                                                   tokenizer_fn=None)
@@ -219,7 +220,6 @@ def get_feature_by_opcode_vt():
 
 #php词汇表
 def  get_feature_by_vt():
-    global max_document_length
     global white_count
     global black_count
     x=[]
@@ -238,7 +238,7 @@ def  get_feature_by_vt():
     x=webshell_files_list+wp_files_list
     y=y1+y2
 
-    vp=tflearn.data_utils.VocabularyProcessor(max_document_length=max_document_length,
+    vp=tflearn.data_utils.VocabularyProcessor(max_document_length=100,
                                               min_frequency=0,
                                               vocabulary=None,
                                               tokenizer_fn=None)

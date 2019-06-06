@@ -13,6 +13,8 @@ import re
 from sklearn.metrics import classification_report
 from sklearn.externals import joblib
 import preprocess
+import matplotlib.pyplot as plt
+
 
 class TrainModel():
     def __init__(self, n, m=0):
@@ -24,7 +26,7 @@ class TrainModel():
         else:
             self.model_path = "./Model/linuxBackdoor_{}-Gram.m".format(self.n)
             self.x_train, self.x_test, self.y_train, self.y_test = preprocess.get_feature_wordbag(self.n)
-
+        
 
     def do_mlp(self):
         clf = MLPClassifier(solver='lbfgs',
@@ -40,10 +42,23 @@ class TrainModel():
     def show_result(self):
         clf = joblib.load(self.model_path)
         y_pred = clf.predict(self.x_test)
-        print(classification_report(self.y_test, y_pred))
-        print metrics.confusion_matrix(self.y_test, y_pred)
+        #print(classification_report(self.y_test, y_pred))
+        self.do_metrics(self.y_test, y_pred)
+
+    def do_metrics(self, y_test,y_pred):
+        print "metrics.confusion_matrix:"
+        print metrics.confusion_matrix(y_test, y_pred)
+        print "metrics.accuracy_score:"
+        print metrics.accuracy_score(y_test, y_pred)
+        print "metrics.precision_score:"
+        print metrics.precision_score(y_test, y_pred)
+        print "metrics.recall_score:"
+        print metrics.recall_score(y_test, y_pred)
+        print "metrics.f1_score:"
+        print metrics.f1_score(y_test,y_pred)
+
 
 if __name__ == "__main__":
     tm = TrainModel(2, 3)
-    tm.do_mlp()
+    #tmc.do_mlp()
     #tm.show_result()

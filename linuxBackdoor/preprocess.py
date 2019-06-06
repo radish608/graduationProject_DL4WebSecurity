@@ -8,10 +8,10 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfTransformer
 import re
 from sklearn.externals import joblib
+import glob
 import pickle
 
 def load_all_files():
-    import glob
     x=[]
     y=[]
     #加载攻击样本

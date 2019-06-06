@@ -199,7 +199,6 @@ def do_dnn_wordbag(x_train, x_test, y_train, y_test):
     print metrics.confusion_matrix(y_test, y_pred)
 
 
-
 def  get_features_by_tf():
     global  max_document_length
     x=[]

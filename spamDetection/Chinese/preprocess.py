@@ -11,9 +11,10 @@ from sklearn.feature_extraction.text import TfidfTransformer, TfidfVectorizer
 import jieba
 import tflearn
 from hanziconv import HanziConv
+import pickle
 
 max_features=5000
-max_document_length=100
+data_model_path = "./Model/DATA/{}.data"
 
 def segment(line):
     return list(jieba.cut(line))
@@ -31,7 +32,13 @@ def segmentA(documents):
     #return list(jieba.cut(line))
 
 def get_features_by_tfidf():
-    global  max_document_length
+    data_path = data_model_path.format("tfidf")
+    if os.path.exists(data_path):
+        with open(data_path, "r") as f:
+            x, y = pickle.loads(f.read())
+            f.close()
+        return x, y
+
     file_list = ['./ham_5000.utf8', './spam_5000.utf8']
 
     content = []
@@ -47,11 +54,22 @@ def get_features_by_tfidf():
                         np.repeat([0], file_cnt[1], axis=0)), axis=0)
 
     x = x.toarray()
+    #data = pickle.dumps((x, y))
+    #with open(data_path, "w") as f:
+    #    f.write(data)
+    #    f.close()
     return x, y
 
 
 def get_features_by_vt():
-    global  max_document_length
+    data_path = data_model_path.format("vt")
+    if os.path.exists(data_path):
+        with open(data_path, "r") as f:
+            x, y = pickle.loads(f.read())
+            f.close()
+        return x, y
+
+    max_document_length=500
     file_list = ['./ham_5000.utf8', './spam_5000.utf8']
 
     content = []
@@ -62,13 +80,17 @@ def get_features_by_vt():
         file_cnt.append(len(content)-before_size)
     y = np.concatenate((np.repeat([1], file_cnt[0],axis=0),
                         np.repeat([0], file_cnt[1], axis=0)), axis=0)
-    vp=tflearn.data_utils.VocabularyProcessor(max_document_length=100,
+    vp=tflearn.data_utils.VocabularyProcessor(max_document_length,
                                               min_frequency=0,
                                               vocabulary=None,
                                               tokenizer_fn=segmentA)
     x=vp.fit_transform(content)
     x=np.array(list(x))
-    return x,y
+    data = pickle.dumps((x, y))
+    with open(data_path, "w") as f:
+        f.write(data)
+        f.close()
+    return x, y
 
 #get_features_by_tf()
 

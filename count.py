@@ -40,4 +40,4 @@ def code_lines_count(path):
                 #print 'Done',file_abs_path
     return code_lines,comm_lines,space_lines
 #test
-print "Code lines: %d\nComments lines: %d\nWhiteSpace lines: %d" %code_lines_count(r'./breakCaptcha')
+print "Code lines: %d\nComments lines: %d\nWhiteSpace lines: %d" %code_lines_count(r'.')
