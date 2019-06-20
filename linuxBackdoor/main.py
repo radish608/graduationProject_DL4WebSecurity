@@ -26,7 +26,7 @@ class TrainModel():
         else:
             self.model_path = "./Model/linuxBackdoor_{}-Gram.m".format(self.n)
             self.x_train, self.x_test, self.y_train, self.y_test = preprocess.get_feature_wordbag(self.n)
-        
+
 
     def do_mlp(self):
         clf = MLPClassifier(solver='lbfgs',
@@ -61,4 +61,4 @@ class TrainModel():
 if __name__ == "__main__":
     tm = TrainModel(2, 3)
     #tmc.do_mlp()
-    #tm.show_result()
+    tm.show_result()

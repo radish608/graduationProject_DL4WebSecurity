@@ -26,79 +26,6 @@ from sklearn.metrics import classification_report
 import preprocess
 
 max_features=10000
-min_opcode_count=2
-
-#pro
-#webshell_dir="../Datasets/dataset_webshell/b/"
-#whitefile_dir="../Datasets/dataset_webshell/w/"
-webshell_dir="../Datasets/dataset_webshell/webshell/PHP/"
-whitefile_dir="../Datasets/dataset_webshell/normal/php/"
-check_dir="~/Downloads/php-exploit-scripts/"
-white_count=0
-black_count=0
-php_bin="/usr/bin/php"
-
-def show_diffrent_max_features():
-    global max_features
-    a=[]
-    b=[]
-    for i in range(1000,20000,2000):
-        max_features=i
-        print "max_features=%d" % i
-        x, y = preprocess.get_features_by_tf()
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4, random_state=0)
-        #gnb = GaussianNB()
-        #gnb.fit(x_train, y_train)
-        #y_pred = gnb.predict(x_test)
-        score=metrics.accuracy_score(y_test, y_pred)
-        a.append(max_features)
-        b.append(score)
-        plt.plot(a, b, 'r')
-    plt.xlabel("max_features")
-    plt.ylabel("metrics.accuracy_score")
-    plt.title("metrics.accuracy_score VS max_features")
-    plt.legend()
-    plt.show()
-
-
-def check_webshell(clf,dir):
-    all=0
-    all_php=0
-    webshell=0
-
-    webshell_files_list = load_files_re(webshell_dir)
-    CV = CountVectorizer(ngram_range=(3, 3), decode_error="ignore", max_features=max_features,
-                         token_pattern=r'\b\w+\b', min_df=1, max_df=1.0)
-    x = CV.fit_transform(webshell_files_list).toarray()
-
-    transformer = TfidfTransformer(smooth_idf=False)
-    transformer.fit_transform(x)
-
-
-    g = os.walk(dir)
-    for path, d, filelist in g:
-        for filename in filelist:
-            fulepath=os.path.join(path, filename)
-            t = load_file(fulepath)
-            t_list=[]
-            t_list.append(t)
-            x2 = CV.transform(t_list).toarray()
-            x2 = transformer.transform(x2).toarray()
-            y_pred = clf.predict(x2)
-            all+=1
-            if filename.endswith('.php'):
-                all_php+=1
-            if y_pred[0] == 1:
-                print "%s is webshell" % fulepath
-                webshell+=1
-
-    print "Scan %d files(%d php files),%d files is webshell" %(all,all_php,webshell)
-
-
-def do_check(x,y,clf):
-    clf.fit(x, y)
-    print "check_webshell"
-    check_webshell(clf,check_dir)
 
 def do_metrics(y_test,y_pred):
     print "metrics.confusion_matrix:"
@@ -258,11 +185,11 @@ if __name__ == '__main__':
     """
     CNN
     """
-    #x, y = preprocess.get_feature_by_opcode_vt()
-    #feature_name = "opcode_vt"
+    x, y = preprocess.get_feature_by_opcode_vt()
+    feature_name = "opcode_vt"
 
-    x, y = preprocess.get_feature_by_vt()
-    feature_name = "php_vt"
+    #x, y = preprocess.get_feature_by_vt()
+    #feature_name = "php_vt"
 
     cnn_tm = CNNTrainModel(x, y, feature_name)
     #cnn_tm.do_cnn()

@@ -27,28 +27,6 @@ import joblib
 
 max_features=5000
 
-def show_diffrent_max_features():
-    global max_features
-    a=[]
-    b=[]
-    for i in range(1000,20000,2000):
-        max_features=i
-        print "max_features=%d" % i
-        x, y = preprocess.get_features_by_tf()
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4, random_state=0)
-        #gnb = GaussianNB()
-        #gnb.fit(x_train, y_train)
-        #y_pred = gnb.predict(x_test)
-        score=metrics.accuracy_score(y_test, y_pred)
-        a.append(max_features)
-        b.append(score)
-        plt.plot(a, b, 'r')
-    plt.xlabel("max_features")
-    plt.ylabel("metrics.accuracy_score")
-    plt.title("metrics.accuracy_score VS max_features")
-    plt.legend()
-    plt.show()
-
 def feature_select(X, y):
     return SelectKBest(chi2, k=500).fit_transform(X, y)
 
@@ -63,6 +41,7 @@ def do_metrics(y_test,y_pred):
     print metrics.recall_score(y_test, y_pred)
     print "metrics.f1_score:"
     print metrics.f1_score(y_test,y_pred)
+
 
 class CNNTrainModel():
     def __init__(self, x, y):
@@ -105,7 +84,7 @@ class CNNTrainModel():
         model.load(self.model_path)
         #y_pred = model.predict(self.x_test)
         #do_metrics(self.y_test, y_pred)
-        print model.evaluate(self.x_test, self.y_test)
+        #print model.evaluate(self.x_test, self.y_test)
         y_predict_list=model.predict(self.x_test)
         #y_predict = list(model.predict(self.x_test, as_iterable=True))
         y_predict=[]
@@ -120,6 +99,7 @@ class CNNTrainModel():
             y_test_list.append(i[1])
 
         do_metrics(y_test_list, y_predict)
+
 
 class MLPTrainModel():
     def __init__(self, x, y):
@@ -148,18 +128,18 @@ class MLPTrainModel():
 
 
 class RNNTrainModel():
-    def __init__(self):
+    def __init__(self, x, y):
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.4, random_state = 0)
-        self.x_train = pad_sequences(x_train, maxlen=max_document_length, value=0.)
-        self.x_test = pad_sequences(x_test, maxlen=max_document_length, value=0.)
+        self.x_train = pad_sequences(x_train, maxlen=500, value=0.)
+        self.x_test = pad_sequences(x_test, maxlen=500, value=0.)
         self.y_train = to_categorical(y_train, nb_classes=2)
         self.y_test = to_categorical(y_test, nb_classes=2)
         #self.feature_name = "tfidf"
-        #self.model_path = "./Model/MLP/mlp_{}".format(self.feature_name)
+        self.model_path = "./Model/RNN/rnn"
 
     def rnn(self):
-        net = tflearn.input_data([None, max_document_length])
-        net = tflearn.embedding(net, input_dim=10240000, output_dim=128)
+        net = tflearn.input_data([None, 500])
+        net = tflearn.embedding(net, input_dim=100000, output_dim=128)
         net = tflearn.lstm(net, 128, dropout=0.8)
         net = tflearn.fully_connected(net, 2, activation='softmax')
         net = tflearn.regression(net, optimizer='adam', learning_rate=0.1,
@@ -170,8 +150,10 @@ class RNNTrainModel():
 
     def do_rnn(self):
         model = self.rnn()
-        model.fit(x_train, y_train, validation_set=(x_test, y_test), show_metric=True,
-                  batch_size=10,run_id="spm-run",n_epoch=5)
+        model.fit(self.x_train, self.y_train, validation_set=(self.x_test, self.y_test), show_metric=True,
+                  batch_size=10,run_id="spam-run",n_epoch=5)
+        model.save(self.model_path)
+
 
 if __name__ == "__main__":
     #show_diffrent_max_features()
@@ -179,7 +161,7 @@ if __name__ == "__main__":
     """
     MLP
     """
-    #x, y = preprocess.get_features_by_tfidf()
+    x, y = preprocess.get_features_by_tfidf()
     #mlp_tm = MLPTrainModel(x, y)
     #mlp_tm.do_mlp()
     #mlp_tm.show_result()
@@ -187,12 +169,14 @@ if __name__ == "__main__":
     """
     CNN
     """
-    x, y = preprocess.get_features_by_vt()
-    cnn_tm = CNNTrainModel(x, y)
+    #x, y = preprocess.get_features_by_vt()
+    #cnn_tm = CNNTrainModel(x, y)
     #cnn_tm.do_cnn()
-    cnn_tm.show_result()
+    #cnn_tm.show_result()
 
     """
     RNN
     """
-    
+    #x, y = preprocess.get_features_by_vt()
+    rnn_tm = RNNTrainModel(x, y)
+    rnn_tm.do_rnn()

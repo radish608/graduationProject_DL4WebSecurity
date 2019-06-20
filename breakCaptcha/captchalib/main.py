@@ -143,6 +143,7 @@ class TrainModel():
             saver.restore(sess, self.model_path)
             print "======ok!"
             text_list = sess.run(predict, feed_dict={self.X: [image], self.keep_prob: 1.})
+            #print text_list
             predict_text = text_list[0].tolist()
 
         print("正确: {}  预测: {}".format(label, predict_text))
@@ -150,7 +151,7 @@ class TrainModel():
         p_text = ""
         for p in predict_text:
             p_text += str(self.characters[p])
-        print(p_text)
+        print p_text
         plt.text(20, 1, 'predict:{}'.format(p_text))
         plt.show()
 
@@ -194,5 +195,5 @@ class TrainModel():
 if __name__ == '__main__':
     tm = TrainModel("./model/cnn/captcha_model")
     #tm.do_cnn()
-    #tm.recognize_captcha()
-    tm.show_result()
+    tm.recognize_captcha()
+    #tm.show_result()

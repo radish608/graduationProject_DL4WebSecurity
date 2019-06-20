@@ -16,7 +16,6 @@ min_opcode_count=2
 
 webshell_dir="../Datasets/dataset_webshell/webshell/PHP/"
 whitefile_dir="../Datasets/dataset_webshell/normal/php/"
-check_dir="~/Downloads/php-exploit-scripts/"
 white_count=0
 black_count=0
 php_bin="/usr/bin/php"
